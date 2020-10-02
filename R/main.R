@@ -1,0 +1,15 @@
+library(tidyverse)
+library(plyr)
+library(dplyr)
+
+#FB Data Locations for initial import
+region_import <- "data/fb_region.csv"
+age_import <- "data/fb_age.csv"
+gender_import <- "data/fb_gender.csv"
+
+source("src/data_import.R")
+
+#Running data_import function to create tibbles
+fb_region <- data_import(region_import)
+fb_age <- data_import(age_import)
+fb_gender<- data_import(gender_import)
