@@ -12,6 +12,8 @@ library(tidyverse)
 library(ggplot2)
 library(plyr)
 library(dplyr)
+library(plotly)
+library(rjson)
 
 #FB Data Locations for initial import
 region_import <- "data/fb_region.csv"
@@ -41,11 +43,21 @@ Row
 ### Gender Audiences
 
 ```{r}
+plot_ly(
+  x = c(fb_gender$Gender),
+  y = c(fb_gender$Reach),
+  name = "Gender Audiences",
+  type = "bar"
+)
 ```
 
 ### Age Audiences
 
 ```{r}
-
+plot_ly(
+  x = c(fb_age$Age),
+  y = c(fb_age$Reach),
+  type = "bar"
+)
 ```
 
