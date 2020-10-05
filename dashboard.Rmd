@@ -15,6 +15,7 @@ library(dplyr)
 library(plotly)
 library(rjson)
 library(maps)
+library(Cairo)
 
 #FB Data Locations for initial import
 region_import <- "data/fb_region.csv"
@@ -35,7 +36,7 @@ Row
 
 ### Region Overview
 
-```{r, echo = FALSE}
+```{r, results = 'HIDE'}
 us_states <- map_data("state")
 us_map <- map_data("usa")
 fb_region_low <- fb_region %>% 
@@ -65,21 +66,70 @@ Row
 ### Gender Audiences
 
 ```{r}
-plot_ly(
-  x = c(fb_gender$Gender),
-  y = c(fb_gender$Impressions),
-  name = "Gender Audiences",
-  type = "bar"
-)
+plot_ly(fb_gender, 
+        x = ~Gender, 
+        y = ~Reach, 
+        type = "bar", 
+        mode = "markers",
+        visible = T) %>%
+  add_trace(fb_age, y = ~Impressions, visible = F) %>%
+  add_trace(fb_age, y = ~`CPC (All)`, visible = F) %>%
+  add_trace(fb_age, y = ~`CTR (All)`, visible = F) %>% 
+  layout(
+    showlegend=FALSE,
+    yaxis = list(title = "Metric"),
+    updatemenus = list(
+      list(
+        y = 1,
+        x = 1,
+        buttons = list(
+          list(method = "restyle",
+               label = "Reach",
+               args = list("visible", list(TRUE, FALSE, FALSE, FALSE))),
+          list(method = "restyle",
+               label = "Impressions",
+               args = list("visible", list(FALSE, TRUE, FALSE, FALSE))),
+          list(method = "rstyle",
+               label = "CPC",
+               args = list("visible", list(FALSE, FALSE, TRUE, FALSE))),
+          list(method = "restyle",
+               label = "CTR",
+               args = list("visible", list(FALSE, FALSE, FALSE, TRUE)))
+        ))))
 ```
 
 ### Age Audiences
 
 ```{r}
-plot_ly(
-  x = c(fb_age$Age),
-  y = c(fb_age$Impressions),
-  type = "bar"
-)
+plot_ly(fb_age, 
+        x = ~Age, 
+        y = ~Reach, 
+        type = "bar", 
+        mode = "markers",
+        visible = T) %>%
+  add_trace(fb_age, y = ~Impressions, visible = F) %>%
+  add_trace(fb_age, y = ~`CPC (All)`, visible = F) %>%
+  add_trace(fb_age, y = ~`CTR (All)`, visible = F) %>% 
+  layout(
+    showlegend=FALSE,
+    yaxis = list(title = "Metric"),
+    updatemenus = list(
+      list(
+        y = 1,
+        x = 1,
+        buttons = list(
+          list(method = "restyle",
+               label = "Reach",
+               args = list("visible", list(TRUE, FALSE, FALSE, FALSE))),
+          list(method = "restyle",
+               label = "Impressions",
+               args = list("visible", list(FALSE, TRUE, FALSE, FALSE))),
+          list(method = "rstyle",
+               label = "CPC",
+               args = list("visible", list(FALSE, FALSE, TRUE, FALSE))),
+          list(method = "restyle",
+               label = "CTR",
+               args = list("visible", list(FALSE, FALSE, FALSE, TRUE)))
+        ))))
 ```
 
