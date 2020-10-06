@@ -46,7 +46,7 @@ fb_region_low <- fb_region %>%
 
 us_plot <- ggplot(data = us_map, mapping = aes(x = long, y = lat, group = group)) +
   coord_quickmap() +
-  geom_polygon(color = "black", fill = "gray")
+  geom_polygon(color = "black", fill = "gray") +
   theme_void() +
   guides(fill = FALSE)
 
@@ -57,8 +57,9 @@ fb_region_map <- us_plot +
   geom_polygon(color = "black", fill = NA) +
   theme_void()
 
-fb_region_map + scale_fill_gradient(trans = "log10")
-
+ggplotly(
+  fb_region_map + scale_fill_gradient(trans = "log10")
+)
 ```
 
 Row
