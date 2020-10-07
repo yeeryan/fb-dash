@@ -9,13 +9,12 @@ output:
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(tidyverse)
-library(ggplot2)
 library(plyr)
 library(dplyr)
 library(plotly)
-library(rjson)
 library(maps)
 library(Cairo)
+library(sf)
 
 #FB Data Locations for initial import
 region_import <- "data/fb_region.csv"
@@ -37,29 +36,42 @@ Row
 ### Region Overview
 
 ```{r, results = 'HIDE'}
+#Preparing mapping info of US
 us_states <- map_data("state")
 us_map <- map_data("usa")
+
+#adjusting fb_region tibble to match with us map data
 fb_region_low <- fb_region %>% 
   mutate(Region = tolower(Region)) %>% 
   mutate(Region=replace(Region, Region == "washington, district of columbia", "district of columbia")) %>% 
   rename(region = Region)
 
-us_plot <- ggplot(data = us_map, mapping = aes(x = long, y = lat, group = group)) +
-  coord_quickmap() +
-  geom_polygon(color = "black", fill = "gray") +
-  theme_void() +
-  guides(fill = FALSE)
-
+#Joining us map data and fb_region 
 region_map <- left_join(us_states, fb_region_low, by = "region")
 
-fb_region_map <- us_plot +
-  geom_polygon(data = region_map, aes(fill = Impressions), color = "white") +
-  geom_polygon(color = "black", fill = NA) +
+fb_region_map <- ggplot(
+  data = region_map, 
+  mapping = aes(
+    x = long, 
+    y = lat,
+    group = group, 
+    text1 = region,
+    text2 = Impressions,
+    text3 = Reach,
+    text4 = `CPC (All)`,
+    text5 = `CTR (All)`)) +
+  geom_polygon(
+    color = "black", 
+    fill = "gray") +
+  geom_polygon(data = region_map, 
+               aes(fill = Reach),
+               color = "white") +
+  coord_quickmap() +
   theme_void()
 
 ggplotly(
-  fb_region_map + scale_fill_gradient(trans = "log10")
-)
+  p = fb_region_map,
+ tooltip = c("text1","text2", "text3", "text4", "text5"))
 ```
 
 Row
