@@ -1,5 +1,5 @@
 ---
-title: "fb-dash"
+title: "Facebook Ad Manager Data for June 2020"
 output: 
   flexdashboard::flex_dashboard:
     orientation: rows
@@ -9,12 +9,9 @@ output:
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(tidyverse)
-library(plyr)
 library(dplyr)
 library(plotly)
 library(maps)
-library(Cairo)
-library(sf)
 
 #FB Data Locations for initial import
 region_import <- "data/fb_region.csv"
