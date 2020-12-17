@@ -9,8 +9,8 @@ output:
 ```{r setup, include=FALSE}
 library(flexdashboard)
 library(tidyverse)
-library(dplyr)
 library(plotly)
+library(leaflet)
 library(maps)
 
 #FB Data Locations for initial import
@@ -25,6 +25,8 @@ fb_region <- data_import(region_import)
 fb_age <- data_import(age_import)
 fb_gender<- data_import(gender_import)
 
+#Preparing Map Data & function
+source("src/plots.R")
 ```
 
 Row
@@ -99,123 +101,10 @@ plot_ly(fb_age,
         ))))
 ```
 
-Row {.tabset} 
+Row
 ------------------------------
 
-### Impressions Overview
+### Audiences Based on Location
 ```{r}
-#Preparing mapping info of US
-us_states <- map_data("state")
-us_map <- map_data("usa")
-
-#adjusting fb_region tibble to match with us map data
-fb_region_low <- fb_region %>% 
-  mutate(Region = tolower(Region)) %>% 
-  mutate(Region=replace(Region, Region == "washington, district of columbia", "district of columbia")) %>% 
-  rename(region = Region)
-
-#Joining us map data and fb_region 
-region_map <- left_join(us_states, fb_region_low, by = "region")
-
-impressions_map <- ggplot(
-  data = region_map, 
-  mapping = aes(
-    x = long, 
-    y = lat,
-    group = group, 
-    text1 = region,
-    text2 = Impressions,
-    text3 = Reach,
-    text4 = `CPC (All)`,
-    text5 = `CTR (All)`)) +
-  geom_polygon(
-    color = "black", 
-    fill = "gray") +
-  geom_polygon(data = region_map, 
-               aes(fill = Impressions),
-               color = "white") +
-  coord_quickmap() +
-  theme_void()
-
-ggplotly(
-  p = impressions_map,
- tooltip = c("text1","text2", "text3", "text4", "text5"))
-```
-
-### Reach Overview
-```{r}
-#Joining us map data and fb_region 
-reach_map <- ggplot(
-  data = region_map, 
-  mapping = aes(
-    x = long, 
-    y = lat,
-    group = group, 
-    text1 = region,
-    text2 = Impressions,
-    text3 = Reach,
-    text4 = `CPC (All)`,
-    text5 = `CTR (All)`)) +
-  geom_polygon(
-    color = "black", 
-    fill = "gray") +
-  geom_polygon(data = region_map, 
-               aes(fill = Reach),
-               color = "white") +
-  coord_quickmap() +
-  theme_void()
-
-reach_map
-```
-
-### CPC Overview
-```{r}
-#Joining us map data and fb_region 
-cpc_map <- ggplot(
-  data = region_map, 
-  mapping = aes(
-    x = long, 
-    y = lat,
-    group = group, 
-    text1 = region,
-    text2 = Impressions,
-    text3 = Reach,
-    text4 = `CPC (All)`,
-    text5 = `CTR (All)`)) +
-  geom_polygon(
-    color = "black", 
-    fill = "gray") +
-  geom_polygon(data = region_map, 
-               aes(fill = `CPC (All)`),
-               color = "white") +
-  coord_quickmap() +
-  theme_void()
-
-cpc_map
-```
-
-### CTR Overview
-```{r}
-#Joining us map data and fb_region 
-ctr_map <- ggplot(
-  data = region_map, 
-  mapping = aes(
-    x = long, 
-    y = lat,
-    group = group, 
-    text1 = region,
-    text2 = Impressions,
-    text3 = Reach,
-    text4 = `CPC (All)`,
-    text5 = `CTR (All)`)) +
-  geom_polygon(
-    color = "black", 
-    fill = "gray") +
-  geom_polygon(data = region_map, 
-               aes(fill = `CTR (All)`),
-               color = "white") +
-  coord_quickmap() +
-  theme_void()
-
-ctr_map
+fb_map()
 ```
